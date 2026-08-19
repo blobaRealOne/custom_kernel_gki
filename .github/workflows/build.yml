@@ -1,0 +1,42 @@
+name: Build Custom GKI Kernel
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install Build Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential bc libssl-dev bison flex libncurses5-dev libncursesw5-dev libelf-dev libdwarf-dev gcc-aarch64-linux-gnu
+
+    - name: Setup Toolchain (Clang r416183b)
+      run: |
+        mkdir -p $HOME/clang-12
+        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android12-release/clang-r416183b.tar.gz
+        tar -xzf clang-r416183b.tar.gz -C $HOME/clang-12
+    - name: Compile Kernel Image
+      run: |
+        export PATH="$HOME/clang-12/bin:$PATH"
+        export ARCH=arm64
+        export SUBARCH=arm64
+        export HEADER_ARCH=arm64
+        export LLVM=1
+        export LLVM_IAS=1
+        export CROSS_COMPILE=aarch64-linux-gnu-
+
+        make olddefconfig
+        make -j$(nproc) Image modules
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Image-GKI-KernelSU
+        path: arch/arm64/boot/Image
+

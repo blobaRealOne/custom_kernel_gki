@@ -1,4 +1,4 @@
-export PATH="/home/myroslav/clang-12/bin:bin/usr/local/bin:/usr/bin:/usr/local/games:/usr/games:/sbin:/usr/sbin"
+export PATH="/home/myroslav/gki-source/clang-12/bin:bin/usr/local/bin:/usr/bin:/usr/local/games:/usr/games:/sbin:/usr/sbin"
 export ARCH=arm64
 export SUBARCH=arm64
 export HEADER_ARCH=arm64
